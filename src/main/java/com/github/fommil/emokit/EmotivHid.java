@@ -3,6 +3,7 @@ package com.github.fommil.emokit;
 
 import com.codeminders.hidapi.*;
 import com.google.common.collect.Lists;
+import com.jonimikkola.EmoConfig;
 import lombok.Getter;
 import lombok.extern.java.Log;
 
@@ -52,6 +53,8 @@ final class EmotivHid implements Closeable {
     @Getter
     private volatile boolean closed;
 
+
+
     public EmotivHid() throws IOException {
         device = findEmotiv();
         device.enableBlocking();
@@ -82,13 +85,13 @@ final class EmotivHid implements Closeable {
         int n;
         long startTime = currentTimeMillis();
         while((n = device.readTimeout(buf, 0)) == 0 && currentTimeMillis() - startTime < TIMEOUT) {
-          try {
-            // limits us to 100Hz samples
-            // http://stackoverflow.com/questions/11094857
-            Thread.sleep(10);
-          } catch (InterruptedException e) {
-          }
-          Thread.yield();
+            try {
+                // limits us to 100Hz samples
+                // http://stackoverflow.com/questions/11094857
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+            }
+            Thread.yield();
         }
 
         if (n != BUFSIZE)
@@ -135,6 +138,7 @@ final class EmotivHid implements Closeable {
         if (!serial.startsWith("SN") || serial.length() != 16)
             throw new IOException("Bad serial: " + serial);
         return serial;
+//        return "";
     }
 
     // workaround http://code.google.com/p/javahidapi/issues/detail?id=40

@@ -1,9 +1,8 @@
 // Copyright Samuel Halliday 2012
 package com.github.fommil.emokit;
 
-import com.github.fommil.emokit.jpa.EmotivDatum;
-import com.github.fommil.emokit.jpa.EmotivSession;
 import com.google.common.collect.Lists;
+import com.jonimikkola.EmoConfig;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import lombok.Getter;
@@ -14,8 +13,8 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.Closeable;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -41,18 +40,12 @@ public final class Emotiv implements Closeable {
     public static void main(String[] args) throws Exception {
         Emotiv emotiv = new Emotiv();
 
-        final EmotivSession session = new EmotivSession();
-        session.setName("My Session");
-        session.setNotes("My Notes for " + emotiv.getSerial());
-
         final Condition condition = new ReentrantLock().newCondition();
 
         emotiv.addEmotivListener(new EmotivListener() {
             @Override
             public void receivePacket(Packet packet) {
-                EmotivDatum datum = EmotivDatum.fromPacket(packet);
-                datum.setSession(session);
-                Emotiv.log.info(datum.toString());
+
             }
 
             @Override
@@ -61,20 +54,20 @@ public final class Emotiv implements Closeable {
             }
         });
 
-       emotiv.start();
-       condition.await();
+        emotiv.start();
+        condition.await();
     }
 
 
-    private final EmotivHid raw;
+    private EmotivHid raw;
     private final AtomicBoolean accessed = new AtomicBoolean();
-    private final Cipher cipher;
+    private Cipher cipher;
     private final EmotivParser parser = new EmotivParser();
 
     @Getter
-    private final String serial;
+    private String serial;
 
-    private final Executor executor;
+    private Executor executor;
 
     /**
      * @throws IOException if there was a problem discovering the device.

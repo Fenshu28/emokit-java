@@ -17,23 +17,27 @@ import java.util.Map;
  * <p/>
  * This is not designed for easy persistence: clients are
  * advised to use their own persistent format or convert
- * to {@link com.github.fommil.emokit.jpa.EmotivDatum}.
+ * to {@link com.github.fommil.emokit.jpa.ThoughtRecord}.
  * <p>
  * Note: this comparator imposes orderings that are inconsistent with equals.
  *
  * @author Sam Halliday
  * @see <a href="https://github.com/openyou/emokit/blob/master/doc/emotiv_protocol.asciidoc">Emotiv Protocol</a>
  */
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 @Log
 @Immutable
 @EqualsAndHashCode
 public final class Packet implements Comparable<Packet> {
-
+    private final int counter;
     private final long timestamp;
     private final int battery;
     private final byte[] frame;
     private final Map<Sensor, Integer> quality;
+
+    public final int getCounter() {
+        return counter;
+    }
 
     public Date getDate() {
         return new Date(timestamp);
@@ -163,6 +167,14 @@ public final class Packet implements Comparable<Packet> {
         return (int)(timestamp - o.timestamp);
     }
 
+    public byte[] getFrame() {
+        return frame;
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
     public enum Sensor {
         QUALITY(99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112),
         F3(10, 11, 12, 13, 14, 15, 0, 1, 2, 3, 4, 5, 6, 7),
@@ -186,7 +198,7 @@ public final class Packet implements Comparable<Packet> {
             this.bits = bits;
         }
 
-        protected int apply(byte[] frame) {
+        public int apply(byte[] frame) {
             int level = 0;
             for (int i = bits.length - 1; i >= 0; --i) {
                 level <<= 1;

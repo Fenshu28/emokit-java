@@ -76,6 +76,14 @@ public class EmotivParser {
 
     private final Map<Packet.Sensor, Integer> quality = Maps.newEnumMap(Sensor.class);
 
+    static public Packet parseRecord(long timestamp, byte[] decrypted) {
+        byte counter = decrypted[0];
+        Sensor channel = getQualityChannel(counter);
+        int battery = 0xFF & counter;
+        Map<Packet.Sensor, Integer> quality = Maps.newEnumMap(Sensor.class);
+        return new Packet(counter, timestamp, battery, decrypted, Maps.newEnumMap(quality));
+    }
+
     public Packet parse(long timestamp, byte[] decrypted) {
         // the counter is used to mixin battery and quality levels
         byte counter = decrypted[0];
@@ -95,10 +103,10 @@ public class EmotivParser {
             quality.put(channel, reading);
         }
 
-        return new Packet(timestamp, battery, decrypted, Maps.newEnumMap(quality));
+        return new Packet(counter, timestamp, battery, decrypted, Maps.newEnumMap(quality));
     }
 
-    private Sensor getQualityChannel(byte counter) {
+    static public Sensor getQualityChannel(byte counter) {
         if (64 <= counter && counter <= 75) {
             counter = (byte) (counter - 64);
         }
