@@ -2,7 +2,6 @@
 package com.github.fommil.emokit;
 
 import com.google.common.collect.Lists;
-import com.jonimikkola.EmoConfig;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import lombok.Getter;
@@ -14,7 +13,6 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -22,7 +20,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Level;
 
 /**
  * Unencrypted access to an Emotiv EEG.
@@ -37,26 +34,26 @@ import java.util.logging.Level;
 @NotThreadSafe
 public final class Emotiv implements Closeable {
 
-    public static void main(String[] args) throws Exception {
-        Emotiv emotiv = new Emotiv();
-
-        final Condition condition = new ReentrantLock().newCondition();
-
-        emotiv.addEmotivListener(new EmotivListener() {
-            @Override
-            public void receivePacket(Packet packet) {
-
-            }
-
-            @Override
-            public void connectionBroken() {
-                condition.signal();
-            }
-        });
-
-        emotiv.start();
-        condition.await();
-    }
+//    public static void main(String[] args) throws Exception {
+//        Emotiv emotiv = new Emotiv();
+//
+//        final Condition condition = new ReentrantLock().newCondition();
+//
+//        emotiv.addEmotivListener(new EmotivListener() {
+//            @Override
+//            public void receivePacket(Packet packet) {
+//
+//            }
+//
+//            @Override
+//            public void connectionBroken() {
+//                condition.signal();
+//            }
+//        });
+//
+//        emotiv.start();
+//        condition.await();
+//    }
 
 
     private EmotivHid raw;
@@ -102,7 +99,7 @@ public final class Emotiv implements Closeable {
                 try {
                     poller();
                 } catch (Exception e) {
-                    Emotiv.log.log(Level.SEVERE, "Problem when polling", e);
+//                    Emotiv.log.log(Level.SEVERE, "Problem when polling", e);
                     try {
                         close();
                     } catch (IOException ignored) {

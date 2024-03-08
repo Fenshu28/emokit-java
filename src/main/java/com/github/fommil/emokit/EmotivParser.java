@@ -1,14 +1,10 @@
 package com.github.fommil.emokit;
 
 import com.google.common.collect.Maps;
-import lombok.Cleanup;
 import lombok.Getter;
 import lombok.extern.java.Log;
 
 import javax.annotation.concurrent.NotThreadSafe;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.Map;
 
 import static com.github.fommil.emokit.Packet.Sensor;
@@ -32,6 +28,7 @@ public class EmotivParser {
      * @param args
      * @see <a href="https://github.com/fommil/emokit-java/issues/23">Issue 23</a>
      */
+    /*
     public static void main(String[] args) throws Exception {
         File file = new File(args[0]);
         EmotivParser parser = new EmotivParser();
@@ -67,7 +64,7 @@ public class EmotivParser {
 
             System.out.println(builder);
         } while (ret != -1);
-    }
+    }*/
 
     @Getter
     private byte lastCounter = -1;
@@ -88,7 +85,7 @@ public class EmotivParser {
         // the counter is used to mixin battery and quality levels
         byte counter = decrypted[0];
         if (counter != lastCounter + 1 && lastCounter != 127)
-            log.config("missed a packet");
+            System.out.println("missed a packet");
 
         if (counter < 0) {
             lastCounter = -1;

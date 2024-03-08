@@ -35,6 +35,16 @@ public final class Packet implements Comparable<Packet> {
     private final byte[] frame;
     private final Map<Sensor, Integer> quality;
 
+    public Packet(int counter, long timestamp, int battery, byte[] frame, Map<Sensor, Integer> quality) {
+        this.counter = counter;
+        this.timestamp = timestamp;
+        this.battery = battery;
+        this.frame = frame;
+        this.quality = quality;
+    }
+
+    
+    
     public final int getCounter() {
         return counter;
     }

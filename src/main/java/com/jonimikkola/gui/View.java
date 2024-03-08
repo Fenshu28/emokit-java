@@ -13,6 +13,7 @@ import java.io.IOException;
 
 public class View {
     public static void main(String[] args) {
+        System.out.println("Correcto.");
         JFrame frame = new JFrame("Emotool");
         SwingConvenience.enableOSXFullscreen(frame);
         frame.setLayout(new BorderLayout());
@@ -66,7 +67,8 @@ public class View {
             emotiv.addEmotivListener(processing);
             emotiv.start();
         } catch (IOException e) {
-            System.exit(1);
+//            System.exit(1);
+            e.printStackTrace();
         }
     }
 }
