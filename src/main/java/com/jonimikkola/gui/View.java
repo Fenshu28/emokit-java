@@ -22,6 +22,7 @@ public class View {
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
 
+        // importante
         EmoConfig.init();
         SignalProcessing processing = new SignalProcessing();
 

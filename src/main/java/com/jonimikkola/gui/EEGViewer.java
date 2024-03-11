@@ -36,8 +36,8 @@ public class EEGViewer extends JPanel {
     private HashMap<Packet.Sensor, ChartContainer> sensorPanelMap;
     private ArrayList<JCheckBox> checkBoxes;
     private ArrayList<Packet> packets;
-    private final JSlider playSlider;
-    private final JSlider rangeSlider;
+    private JSlider playSlider = null;
+    private JSlider rangeSlider = null;
     private int range = 400;
 
     private ChartContainer createChart(String name, Color color) {
@@ -82,6 +82,10 @@ public class EEGViewer extends JPanel {
         return new ChartContainer(p, chart, series, chartPanel);
     }
 
+    public EEGViewer() {
+    }
+    
+    
     public EEGViewer(final JFrame frame) {
         playRecord = new RecordLoader();
         sensorPanelMap = new HashMap<Packet.Sensor, ChartContainer>();
