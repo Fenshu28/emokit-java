@@ -131,6 +131,10 @@ public class RecordPanel extends JPanel implements EmotivListener {
                 first = false;
             }
             byte[] array = packet.getFrame();
+            for (byte b : array) {
+                System.out.println(b);
+            }
+            System.out.println("--------------------------------");
             long timeMs = System.currentTimeMillis() - startTime;
             byte[] timeBytes = Longs.toByteArray(timeMs);
             timeLabel.setText("Time: " + timeMs + " ms");

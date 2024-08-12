@@ -1,7 +1,8 @@
 //Copyright Joni Mikkola 2014
-
 package com.jonimikkola.gui;
 
+import com.formdev.flatlaf.FlatIntelliJLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import com.github.fommil.emokit.Emotiv;
 import com.github.fommil.swing.SwingConvenience;
 import com.jonimikkola.EmoConfig;
@@ -12,7 +13,14 @@ import java.awt.*;
 import java.io.IOException;
 
 public class View {
+
     public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(new FlatIntelliJLaf());
+        } catch (Exception ex) {
+            System.err.println("Failed to initialize LaF");
+        }
+        
         System.out.println("Correcto.");
         JFrame frame = new JFrame("Emotool");
         SwingConvenience.enableOSXFullscreen(frame);
@@ -21,7 +29,7 @@ public class View {
         frame.setSize(1024, 768);
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
-
+        
         // importante
         EmoConfig.init();
         SignalProcessing processing = new SignalProcessing();

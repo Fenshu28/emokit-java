@@ -66,6 +66,7 @@ public class SensorQualityView extends JPanel implements EmotivListener {
 
     @Override
     protected void paintComponent(Graphics g) {
+        g.clearRect(0, 0, getWidth(), getHeight());
         g.drawImage(image, position.x, position.y, null);
         for (Map.Entry<Sensor, Point> entry: sensors.entrySet()) {
             Sensor sensor = entry.getKey();
