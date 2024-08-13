@@ -15,20 +15,23 @@ import java.util.Map;
 /**
  * Contains the sensor data from a single packet of data.
  * <p/>
- * This is not designed for easy persistence: clients are
- * advised to use their own persistent format or convert
- * to {@link com.github.fommil.emokit.jpa.ThoughtRecord}.
+ * This is not designed for easy persistence: clients are advised to use their
+ * own persistent format or convert to
+ * {@link com.github.fommil.emokit.jpa.ThoughtRecord}.
  * <p>
  * Note: this comparator imposes orderings that are inconsistent with equals.
  *
  * @author Sam Halliday
- * @see <a href="https://github.com/openyou/emokit/blob/master/doc/emotiv_protocol.asciidoc">Emotiv Protocol</a>
+ * @see
+ * <a href="https://github.com/openyou/emokit/blob/master/doc/emotiv_protocol.asciidoc">Emotiv
+ * Protocol</a>
  */
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 @Log
 @Immutable
 @EqualsAndHashCode
 public final class Packet implements Comparable<Packet> {
+
     private final int counter;
     private final long timestamp;
     private final int battery;
@@ -43,8 +46,6 @@ public final class Packet implements Comparable<Packet> {
         this.quality = quality;
     }
 
-    
-    
     public final int getCounter() {
         return counter;
     }
@@ -62,8 +63,9 @@ public final class Packet implements Comparable<Packet> {
     }
 
     public Integer getSensor(Sensor sensor) {
-        if (sensor == Sensor.QUALITY)
+        if (sensor == Sensor.QUALITY) {
             throw new IllegalArgumentException();
+        }
         return sensor.apply(frame);
     }
 
@@ -72,10 +74,12 @@ public final class Packet implements Comparable<Packet> {
      * @return the quality of the sensor.
      */
     public Integer getQuality(Packet.Sensor sensor) {
-        if (sensor == null)
+        if (sensor == null) {
             throw new NullPointerException();
-        if (sensor == Packet.Sensor.QUALITY)
+        }
+        if (sensor == Packet.Sensor.QUALITY) {
             throw new IllegalArgumentException();
+        }
         return quality.get(sensor);
     }
 
@@ -92,17 +96,22 @@ public final class Packet implements Comparable<Packet> {
     public Map<Sensor, Integer> getSensors() {
         Map<Sensor, Integer> sensors = Maps.newEnumMap(Sensor.class);
         for (Sensor sensor : Sensor.values()) {
-            if (sensor == Sensor.QUALITY) continue;
+            if (sensor == Sensor.QUALITY) {
+                continue;
+            }
             sensors.put(sensor, getSensor(sensor));
         }
         return sensors;
     }
 
     /**
-     * @return [0, 100] the percentage level of the battery, zero if no data available.
+     * @return [0, 100] the percentage level of the battery, zero if no data
+     * available.
      */
     public int getBatteryLevel() {
-        if (battery >= 248) return 100;
+        if (battery >= 248) {
+            return 100;
+        }
         switch (battery) {
             case 247:
                 return 99;
@@ -162,7 +171,9 @@ public final class Packet implements Comparable<Packet> {
         builder.append(",");
         builder.append(getGyroY());
         for (Sensor sensor : Sensor.values()) {
-            if (sensor == Sensor.QUALITY) continue;
+            if (sensor == Sensor.QUALITY) {
+                continue;
+            }
             builder.append(",");
             builder.append(getSensor(sensor));
             builder.append(" (");
@@ -171,10 +182,43 @@ public final class Packet implements Comparable<Packet> {
         }
         return builder.toString();
     }
+    
+    public String toJson() {
+        StringBuilder builder = new StringBuilder();
+        
+        builder.append("{");
+        builder.append("\"timestamp\":");
+        builder.append(getTimestamp());
+        builder.append(",");
+        builder.append("\"battery\":");
+        builder.append(getBatteryLevel());
+        builder.append(",");
+        builder.append("\"gX\":");
+        builder.append(getGyroX());
+        builder.append(",");
+        builder.append("\"gY\":");
+        builder.append(getGyroY());
+        builder.append(",");
+        builder.append("\"signals\":");
+        builder.append("{");
+        for (Sensor sensor : Sensor.values()) {
+            if (sensor == Sensor.QUALITY) {
+                continue;
+            }
+            builder.append("\""+ sensor.name() +"\":");
+            builder.append(getSensor(sensor));
+            builder.append(",");
+//            builder.append(getQuality(sensor));
+//            builder.append(")");
+        }        
+        builder.append("}");
+        builder.append("}");
+        return builder.toString();
+    }
 
     @Override
     public int compareTo(Packet o) {
-        return (int)(timestamp - o.timestamp);
+        return (int) (timestamp - o.timestamp);
     }
 
     public byte[] getFrame() {

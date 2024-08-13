@@ -1,6 +1,7 @@
 //Copyright Joni Mikkola 2014
 package com.jonimikkola.gui;
 
+import com.fenshu.view.TransmisionPanel;
 import com.formdev.flatlaf.FlatIntelliJLaf;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.github.fommil.emokit.Emotiv;
@@ -13,7 +14,7 @@ import java.awt.*;
 import java.io.IOException;
 
 public class View {
-
+    
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(new FlatIntelliJLaf());
@@ -29,16 +30,17 @@ public class View {
         frame.setSize(1024, 768);
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
-        
+
         // importante
         EmoConfig.init();
         SignalProcessing processing = new SignalProcessing();
-
+        
         JPanel sidebar = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         JPanel topPanel = new JPanel(new BorderLayout());
         RecordPanel playRecordPanel = new RecordPanel(frame);
-
+        TransmisionPanel sendPanel = new TransmisionPanel();
+        
         BatteryView batteryView = new BatteryView();
         c.fill = GridBagConstraints.HORIZONTAL;
         c.gridy = 0;
@@ -46,25 +48,26 @@ public class View {
         topPanel.add(playRecordPanel, BorderLayout.WEST);
 
         sidebar.add(topPanel, c);
-
+        
         SensorQualityView quality = new SensorQualityView();
         c.gridy = 1;
         sidebar.add(quality, c);
-
+        
         FFTView brainView = new FFTView();
         c.gridy = 2;
         sidebar.add(brainView, c);
         sidebar.setPreferredSize(new Dimension(300, 500));
-
+        
         frame.add(sidebar, BorderLayout.WEST);
         JTabbedPane activityPane = new JTabbedPane();
         final SensorView sensors = new SensorView();
-        activityPane.addTab("EEG", null, sensors, "Display eeg data from brain");
-
+        activityPane.addTab("Visualozador EEG", null, sensors, "Muestra las señales EEG del cerebro en tiempo real");
+        
         final EEGViewer viewer = new EEGViewer(frame);
-        activityPane.addTab("Viewer", null, viewer, "Show recorded eeg data");
+        activityPane.addTab("Lector", null, viewer, "Muestra un lector de las señales EEG");
+        activityPane.addTab("Transmisión", null, sendPanel, "Configuraciones para enviar los datos");
         frame.add(activityPane, BorderLayout.CENTER);
-
+        
         frame.setVisible(true);
         try {
             Emotiv emotiv = new Emotiv();
@@ -74,6 +77,7 @@ public class View {
             emotiv.addEmotivListener(batteryView);
             emotiv.addEmotivListener(sensors);
             emotiv.addEmotivListener(processing);
+            emotiv.addEmotivListener(sendPanel);
             emotiv.start();
         } catch (IOException e) {
 //            System.exit(1);

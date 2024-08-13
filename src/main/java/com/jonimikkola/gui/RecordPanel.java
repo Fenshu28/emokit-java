@@ -1,7 +1,7 @@
 //Copyright Joni Mikkola 2014
-
 package com.jonimikkola.gui;
 
+import com.fenshu.transmision.Transmision;
 import com.github.fommil.emokit.EmotivListener;
 import com.github.fommil.emokit.Packet;
 import com.google.common.primitives.Longs;
@@ -16,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class RecordPanel extends JPanel implements EmotivListener {
+
     private final JFileChooser fileChooser;
     private final JLabel statusLabel;
     private final JLabel fileLabel;
@@ -27,6 +28,9 @@ public class RecordPanel extends JPanel implements EmotivListener {
     private Boolean first;
     private Boolean recording;
     private Long startTime;
+
+    
+
     public RecordPanel(final JFrame frame) {
         super(new BorderLayout());
 
@@ -39,6 +43,7 @@ public class RecordPanel extends JPanel implements EmotivListener {
         recording = false;
         fileButton = new JButton("Select file");
         recordButton = new JButton("Record");
+        
 
         JPanel gridPanel = new JPanel(new GridLayout(3, 0));
         statusLabel = new JLabel("Status: not recording");
@@ -54,7 +59,7 @@ public class RecordPanel extends JPanel implements EmotivListener {
         recordButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(!recording) {
+                if (!recording) {
                     startRecording();
                 } else {
                     stopRecording();
@@ -70,10 +75,10 @@ public class RecordPanel extends JPanel implements EmotivListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 int status = fileChooser.showSaveDialog(frame);
-                if(status == JFileChooser.APPROVE_OPTION) {
+                if (status == JFileChooser.APPROVE_OPTION) {
                     String fileString = fileChooser.getSelectedFile().getName();
 
-                    if(!fileChooser.getSelectedFile().getAbsolutePath().endsWith(".emo")){
+                    if (!fileChooser.getSelectedFile().getAbsolutePath().endsWith(".emo")) {
                         filePath = fileChooser.getSelectedFile() + ".emo";
                         fileString += ".emo";
                     } else {
@@ -86,6 +91,8 @@ public class RecordPanel extends JPanel implements EmotivListener {
                 }
             }
         });
+
+        
 
         JPanel layout = new JPanel(new GridLayout(0, 2));
         layout.add(recordButton);
@@ -125,16 +132,13 @@ public class RecordPanel extends JPanel implements EmotivListener {
     }
 
     public void record(Packet packet) throws IOException {
-        if(byteWriter != null) {
-            if(first) {
+        if (byteWriter != null) {
+            if (first) {
                 startTime = System.currentTimeMillis();
                 first = false;
             }
             byte[] array = packet.getFrame();
-            for (byte b : array) {
-                System.out.println(b);
-            }
-            System.out.println("--------------------------------");
+
             long timeMs = System.currentTimeMillis() - startTime;
             byte[] timeBytes = Longs.toByteArray(timeMs);
             timeLabel.setText("Time: " + timeMs + " ms");
@@ -147,7 +151,7 @@ public class RecordPanel extends JPanel implements EmotivListener {
     public void receivePacket(final Packet packet) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
-                if(recording) {
+                if (recording) {
                     try {
                         record(packet);
                     } catch (IOException e) {
@@ -159,5 +163,6 @@ public class RecordPanel extends JPanel implements EmotivListener {
     }
 
     @Override
-    public void connectionBroken() {}
+    public void connectionBroken() {
+    }
 }
